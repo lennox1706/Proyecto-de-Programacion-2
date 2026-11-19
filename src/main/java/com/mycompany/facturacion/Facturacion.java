@@ -1,16 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.facturacion;
 
 /**
- *
- * @author lenno
+ * Punto de entrada del sistema: siempre inicia mostrando el login.
  */
 public class Facturacion {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        java.awt.EventQueue.invokeLater(() -> new FrmLogin().setVisible(true));
     }
 }
