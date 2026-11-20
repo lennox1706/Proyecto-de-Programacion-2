@@ -13,10 +13,12 @@ import javax.swing.table.DefaultTableModel;
  * @author lenno
  */
 public class FrmNuevaFactura extends javax.swing.JFrame {
+
     private final ProductoRepository productoRepository = new ProductoRepository();
     private Producto productoSeleccionado;
     private final Factura factura = new Factura(0, java.time.LocalDate.now(), "", "", 0);
-    
+    private final ClienteRepository clienteRepositorio = new ClienteRepository();
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmNuevaFactura.class.getName());
 
     /**
@@ -25,7 +27,6 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     public FrmNuevaFactura() {
         initComponents();
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -449,7 +450,7 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_btnQuitarProductoActionPerformed
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
-
+        mostrarClienteDeCedula();
     }//GEN-LAST:event_txtCedulaKeyReleased
 
     private void txtCodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyReleased
@@ -461,8 +462,33 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGuardarFacturaActionPerformed
 
     private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
-
+        DlgBuscarCliente dialogo = new DlgBuscarCliente(this, true);
+        dialogo.setVisible(true); // se detiene aquí hasta que se cierre el diálogo
+        Cliente cliente = dialogo.getClienteSeleccionado();
+        if (cliente != null) {
+            txtCedula.setText(cliente.getCedula());
+            txtNombre.setText(cliente.getNombre());
+        }
     }//GEN-LAST:event_btnBuscarClienteActionPerformed
+    private void mostrarClienteDeCedula() {
+        String cedula = txtCedula.getText().trim();
+        if (cedula.isEmpty()) {
+            txtNombre.setText("");
+            return;
+        }
+        try {
+            Cliente cliente = clienteRepositorio.buscarPorCedula(cedula);
+            if (cliente == null) {
+                txtNombre.setText("");
+            } else {
+                txtNombre.setText(cliente.getNombre());
+            }
+        } catch (SQLException ex) {
+            txtNombre.setText("");
+            System.out.println("No se pudo buscar el cliente: " + ex.getMessage());
+        }
+    }
+
     private void actualizarDetalle() {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
 
@@ -479,6 +505,7 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
         }
         lblTotal.setText("TOTAL: ₡" + factura.getTotal());
     }
+
     /**
      * @param args the command line arguments
      */
