@@ -4,19 +4,27 @@
  */
 package com.mycompany.facturacion;
 
-/**
- *
- * @author andre
- */
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class FrmClientes extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmClientes.class.getName());
+    private final ClienteRepository repositorio = new ClienteRepository();
+    private DefaultTableModel modelo;
 
     /**
      * Creates new form FrmClientes
      */
     public FrmClientes() {
         initComponents();
+        modelo = (DefaultTableModel) tblClientes.getModel();
+        limpiar();
+        mostrarTodas();
+
     }
 
     /**
@@ -29,28 +37,436 @@ public class FrmClientes extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        lblBuscar = new javax.swing.JLabel();
+        txtBuscar = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
+        btnMostrarTodas = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblClientes = new javax.swing.JTable();
+        lblBuscar1 = new javax.swing.JLabel();
+        lblBuscar2 = new javax.swing.JLabel();
+        lblBuscar3 = new javax.swing.JLabel();
+        lblBuscar4 = new javax.swing.JLabel();
+        txtCedula = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
+        txtTelefono = new javax.swing.JTextField();
+        txtCorreo = new javax.swing.JTextField();
+        btnAgregar = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setBackground(new java.awt.Color(117, 193, 200));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Mantenimiento de clientes");
+        jLabel1.setText("Gestion de Clientes");
+        jLabel1.setOpaque(true);
+
+        lblBuscar.setText("Buscar por nombre o cédula");
+
+        txtBuscar.addActionListener(this::txtBuscarActionPerformed);
+
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(this::btnBuscarActionPerformed);
+
+        btnMostrarTodas.setText("Mostrar todas");
+        btnMostrarTodas.addActionListener(this::btnMostrarTodasActionPerformed);
+
+        tblClientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Cédula", "Nombre", "Telefono", "Correo"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblClientesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblClientes);
+
+        lblBuscar1.setText("Cédula");
+
+        lblBuscar2.setText("Nombre");
+
+        lblBuscar3.setText("Telefono");
+
+        lblBuscar4.setText("Correo");
+
+        txtCedula.addActionListener(this::txtCedulaActionPerformed);
+
+        txtNombre.addActionListener(this::txtNombreActionPerformed);
+
+        btnAgregar.setBackground(new java.awt.Color(117, 193, 200));
+        btnAgregar.setText("Agregar");
+        btnAgregar.setOpaque(true);
+        btnAgregar.addActionListener(this::btnAgregarActionPerformed);
+
+        btnGuardar.setBackground(new java.awt.Color(117, 193, 200));
+        btnGuardar.setText("Guardar");
+        btnGuardar.setOpaque(true);
+        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
+
+        btnEliminar.setBackground(new java.awt.Color(117, 193, 200));
+        btnEliminar.setText("Eliminar");
+        btnEliminar.setOpaque(true);
+        btnEliminar.addActionListener(this::btnEliminarActionPerformed);
+
+        btnLimpiar.setBackground(new java.awt.Color(117, 193, 200));
+        btnLimpiar.setText("Limpiar");
+        btnLimpiar.setOpaque(true);
+        btnLimpiar.addActionListener(this::btnLimpiarActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 623, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMostrarTodas)
+                        .addGap(0, 4, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtTelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                                    .addComponent(lblBuscar3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtCorreo, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                                    .addComponent(lblBuscar4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(lblBuscar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtCedula, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblBuscar2, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtNombre)
+                                        .addGap(1, 1, 1)))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 481, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblBuscar)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscar)
+                    .addComponent(btnMostrarTodas))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblBuscar1)
+                            .addComponent(lblBuscar2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblBuscar3)
+                            .addComponent(lblBuscar4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void mostrarTodas() {
+        try {
+            llenarTabla(repositorio.listar());
+        } catch (SQLException ex) {
+            mostrarError("No se pudieron cargar los clientes", ex);
+        }
+    }
+
+    private void buscar() {
+        String texto = txtBuscar.getText().trim();
+        if (texto.isEmpty()) {
+            mostrarTodas();
+            return;
+        }
+        try {
+            List<Cliente> resultado = repositorio.buscar(texto);
+            llenarTabla(resultado);
+            if (resultado.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron clientes con ese criterio.",
+                        "Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (SQLException ex) {
+            mostrarError("No se pudo realizar la búsqueda", ex);
+        }
+    }
+
+    private void llenarTabla(List<Cliente> clientes) {
+        modelo.setRowCount(0);
+        for (Cliente c : clientes) {
+            modelo.addRow(new Object[]{c.getCedula(), c.getNombre(), c.getTelefono(), c.getCorreo()});
+        }
+        limpiar();
+    }
+
+    private void refrescarTabla() {
+        try {
+            String texto = txtBuscar.getText().trim();
+            if (texto.isEmpty()) {
+                llenarTabla(repositorio.listar());
+            } else {
+                llenarTabla(repositorio.buscar(texto));
+            }
+        } catch (SQLException ex) {
+            mostrarError("No se pudo actualizar la tabla", ex);
+        }
+    }
+
+    private void cargarFilaSeleccionada() {
+        int fila = tblClientes.getSelectedRow();
+        if (fila < 0) {
+            return;
+        }
+        txtCedula.setText(String.valueOf(modelo.getValueAt(fila, 0)));
+        txtNombre.setText(String.valueOf(modelo.getValueAt(fila, 1)));
+        txtTelefono.setText(String.valueOf(modelo.getValueAt(fila, 2)));
+        txtCorreo.setText(String.valueOf(modelo.getValueAt(fila, 3)));
+        modoEdicion(true);
+    }
+    private void agregar() {
+        Cliente c = leerFormulario();
+        if (c == null) {
+            return;
+        }
+        try {
+            if (repositorio.buscarPorCedula(c.getCedula()) != null) {
+                JOptionPane.showMessageDialog(this, "Ya existe un cliente con esa cédula.",
+                        "Cédula duplicada", JOptionPane.WARNING_MESSAGE);
+                txtCedula.requestFocus();
+                return;
+            }
+            repositorio.guardar(c);
+            JOptionPane.showMessageDialog(this, "Cliente agregado correctamente.");
+            refrescarTabla();
+        } catch (SQLException ex) {
+            mostrarError("No se pudo agregar el cliente", ex);
+        }
+    }
+
+    private void guardarCambios() {
+        if (tblClientes.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla para editarlo.",
+                    "Sin selección", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        Cliente c = leerFormulario();
+        if (c == null) {
+            return;
+        }
+        try {
+            repositorio.editar(c);
+            JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente.");
+            refrescarTabla();
+        } catch (SQLException ex) {
+            mostrarError("No se pudo actualizar el cliente", ex);
+        }
+    }
+
+    private void eliminar() {
+        if (tblClientes.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla para eliminarlo.",
+                    "Sin selección", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(this,
+                "¿Eliminar al cliente " + txtNombre.getText().trim() + "?",
+                "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (opcion != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            repositorio.eliminar(txtCedula.getText().trim());
+            JOptionPane.showMessageDialog(this, "Cliente eliminado correctamente.");
+            refrescarTabla();
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            JOptionPane.showMessageDialog(this, "No se puede eliminar: el cliente tiene facturas registradas.",
+                    "Cliente con facturas", JOptionPane.WARNING_MESSAGE);
+        } catch (SQLException ex) {
+            mostrarError("No se pudo eliminar el cliente", ex);
+        }
+    }
+
+    private void limpiar() {
+        txtCedula.setText("");
+        txtNombre.setText("");
+        txtTelefono.setText("");
+        txtCorreo.setText("");
+        tblClientes.clearSelection();
+        modoEdicion(false);
+        txtCedula.requestFocus();
+    }
+
+    private void modoEdicion(boolean editando) {
+        txtCedula.setEditable(!editando);
+        btnAgregar.setEnabled(!editando);
+        btnGuardar.setEnabled(editando);
+        btnEliminar.setEnabled(editando);
+    }
+
+    private void mostrarError(String mensaje, SQLException ex) {
+        JOptionPane.showMessageDialog(this, mensaje + ":\n" + ex.getMessage(),
+                "Error de base de datos", JOptionPane.ERROR_MESSAGE);
+    }
+    private boolean soloNumeros(String texto) {
+        for (int i = 0; i < texto.length(); i++) {
+            char c = texto.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean correoValido(String correo) {
+        int arroba = correo.indexOf("@");
+        int punto = correo.lastIndexOf(".");
+        if (correo.contains(" ")) {
+            return false;
+        }
+        if (arroba <= 0 || arroba != correo.lastIndexOf("@")) {
+            return false;
+        }
+        if (punto <= arroba + 1 || punto == correo.length() - 1) {
+            return false;
+        }
+        return true;
+    }
+
+    private Cliente leerFormulario() {
+        String cedula = txtCedula.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String telefono = txtTelefono.getText().trim();
+        String correo = txtCorreo.getText().trim();
+
+        if (cedula.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.",
+                    "Datos incompletos", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+        if (!soloNumeros(cedula) || cedula.length() > 20) {
+            JOptionPane.showMessageDialog(this, "La cédula debe contener solo números (máximo 20).",
+                    "Cédula inválida", JOptionPane.WARNING_MESSAGE);
+            txtCedula.requestFocus();
+            return null;
+        }
+        if (!soloNumeros(telefono) || telefono.length() < 7 || telefono.length() > 20) {
+            JOptionPane.showMessageDialog(this, "El teléfono debe tener solo números (entre 7 y 20 dígitos).",
+                    "Teléfono inválido", JOptionPane.WARNING_MESSAGE);
+            txtTelefono.requestFocus();
+            return null;
+        }
+        if (!correoValido(correo)) {
+            JOptionPane.showMessageDialog(this, "El correo no es válido (ejemplo: nombre@dominio.com).",
+                    "Correo inválido", JOptionPane.WARNING_MESSAGE);
+            txtCorreo.requestFocus();
+            return null;
+        }
+        if (nombre.length() > 100 || correo.length() > 100) {
+            JOptionPane.showMessageDialog(this, "Nombre y correo admiten máximo 100 caracteres.",
+                    "Datos muy largos", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+        return new Cliente(cedula, nombre, telefono, correo);
+    }
+    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
+        buscar();
+    }//GEN-LAST:event_txtBuscarActionPerformed
+
+    private void txtCedulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCedulaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCedulaActionPerformed
+
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        agregar();
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        guardarCambios();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        eliminar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        limpiar();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        buscar();
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnMostrarTodasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodasActionPerformed
+        txtBuscar.setText("");
+mostrarTodas();
+    }//GEN-LAST:event_btnMostrarTodasActionPerformed
+
+    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
+        cargarFilaSeleccionada();
+    }//GEN-LAST:event_tblClientesMouseClicked
 
     /**
      * @param args the command line arguments
@@ -78,6 +494,24 @@ public class FrmClientes extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnLimpiar;
+    private javax.swing.JButton btnMostrarTodas;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblBuscar;
+    private javax.swing.JLabel lblBuscar1;
+    private javax.swing.JLabel lblBuscar2;
+    private javax.swing.JLabel lblBuscar3;
+    private javax.swing.JLabel lblBuscar4;
+    private javax.swing.JTable tblClientes;
+    private javax.swing.JTextField txtBuscar;
+    private javax.swing.JTextField txtCedula;
+    private javax.swing.JTextField txtCorreo;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 }
