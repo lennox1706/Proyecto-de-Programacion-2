@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.facturacion;
 
@@ -8,13 +8,47 @@ package com.mycompany.facturacion;
  *
  * @author lenno
  */
-public class FrmListaFacturas extends javax.swing.JPanel {
+public class FrmListaFacturas extends javax.swing.JFrame {
+
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmListaFacturas.class.getName());
+
+    private final FacturaRepository repositorio = new FacturaRepository();
+
+    private final java.time.format.DateTimeFormatter formato = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Creates new form FrmListaFacturas
      */
     public FrmListaFacturas() {
         initComponents();
+        mostrarTodas();
+    }
+
+    private void mostrarTodas() {
+        try {
+            cargarTabla(repositorio.listar());
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error al cargar las facturas: " + e.getMessage());
+        }
+    }
+
+    private void cargarTabla(java.util.List<Factura> facturas) {
+
+        javax.swing.table.DefaultTableModel modelo
+                = (javax.swing.table.DefaultTableModel) tabla.getModel();
+
+        modelo.setRowCount(0);
+
+        for (Factura factura : facturas) {
+            modelo.addRow(new Object[]{
+                factura.getNumero(),
+                factura.getFecha().format(formato),
+                factura.getCedulaCliente(),
+                factura.getNombreCliente(),
+                factura.getTotal()
+            });
+        }
     }
 
     /**
@@ -26,15 +60,43 @@ public class FrmListaFacturas extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btnBuscar = new javax.swing.JButton();
+        btnAgregarFactura = new javax.swing.JButton();
+        btnVerFactura = new javax.swing.JButton();
+        btnCerrar = new javax.swing.JButton();
+        btnMostrarTodas = new javax.swing.JButton();
         lblTitulo = new javax.swing.JLabel();
         lblBuscar = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
-        btnBuscar = new javax.swing.JButton();
-        btnAgregarFactura = new javax.swing.JButton();
-        btnVerFactura = new javax.swing.JButton();
-        btnCerrar = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        btnBuscar.setBackground(new java.awt.Color(0, 153, 0));
+        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(this::btnBuscarActionPerformed);
+
+        btnAgregarFactura.setBackground(new java.awt.Color(0, 153, 0));
+        btnAgregarFactura.setForeground(new java.awt.Color(255, 255, 255));
+        btnAgregarFactura.setText("Agregar");
+        btnAgregarFactura.addActionListener(this::btnAgregarFacturaActionPerformed);
+
+        btnVerFactura.setBackground(new java.awt.Color(0, 153, 0));
+        btnVerFactura.setForeground(new java.awt.Color(255, 255, 255));
+        btnVerFactura.setText("Ver factura");
+        btnVerFactura.addActionListener(this::btnVerFacturaActionPerformed);
+
+        btnCerrar.setBackground(new java.awt.Color(0, 153, 51));
+        btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrar.setText("Cerrar");
+        btnCerrar.addActionListener(this::btnCerrarActionPerformed);
+
+        btnMostrarTodas.setBackground(new java.awt.Color(0, 153, 51));
+        btnMostrarTodas.setForeground(new java.awt.Color(255, 255, 255));
+        btnMostrarTodas.setText("Mostrar");
+        btnMostrarTodas.addActionListener(this::btnMostrarTodasActionPerformed);
 
         lblTitulo.setBackground(new java.awt.Color(0, 153, 0));
         lblTitulo.setFont(new java.awt.Font("SansSerif", 1, 17)); // NOI18N
@@ -62,28 +124,8 @@ public class FrmListaFacturas extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tabla);
 
-        btnBuscar.setBackground(new java.awt.Color(0, 153, 0));
-        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        btnBuscar.setText("Buscar");
-        btnBuscar.addActionListener(this::btnBuscarActionPerformed);
-
-        btnAgregarFactura.setBackground(new java.awt.Color(0, 153, 0));
-        btnAgregarFactura.setForeground(new java.awt.Color(255, 255, 255));
-        btnAgregarFactura.setText("Agregar");
-        btnAgregarFactura.addActionListener(this::btnAgregarFacturaActionPerformed);
-
-        btnVerFactura.setBackground(new java.awt.Color(0, 153, 0));
-        btnVerFactura.setForeground(new java.awt.Color(255, 255, 255));
-        btnVerFactura.setText("Ver factura");
-        btnVerFactura.addActionListener(this::btnVerFacturaActionPerformed);
-
-        btnCerrar.setBackground(new java.awt.Color(0, 153, 51));
-        btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCerrar.setText("Cerrar");
-        btnCerrar.addActionListener(this::btnCerrarActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -94,6 +136,8 @@ public class FrmListaFacturas extends javax.swing.JPanel {
                         .addComponent(btnBuscar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnAgregarFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnMostrarTodas, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,8 +165,9 @@ public class FrmListaFacturas extends javax.swing.JPanel {
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                    .addComponent(btnAgregarFactura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(btnAgregarFactura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMostrarTodas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -131,29 +176,93 @@ public class FrmListaFacturas extends javax.swing.JPanel {
                     .addComponent(btnCerrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
         );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+        String texto = txtBuscar.getText().trim();
+
+        try {
+            if (texto.isEmpty()) {
+                mostrarTodas();
+            } else {
+                cargarTabla(repositorio.buscar(texto));
+            }
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al buscar facturas: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnAgregarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFacturaActionPerformed
-        // TODO add your handling code here:
+        FrmNuevaFactura formulario = new FrmNuevaFactura();
+
+        formulario.setVisible(true);
+
+        mostrarTodas();
     }//GEN-LAST:event_btnAgregarFacturaActionPerformed
 
     private void btnVerFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerFacturaActionPerformed
-        // TODO add your handling code here:
+        int fila = tabla.getSelectedRow();
+
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Seleccione una factura de la tabla");
+            return;
+        }
+
+        int numero = (int) tabla.getValueAt(fila, 0);
+
+        try {
+            Factura factura = repositorio.BuscarPorNumero(numero);
+
+            if (factura != null) {
+                java.util.List<DetalleFactura> detalles = repositorio.listarDetalle(numero);
+            }
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al consultar la factura: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnVerFacturaActionPerformed
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
-        // TODO add your handling code here:
+        this.setVisible(false);
     }//GEN-LAST:event_btnCerrarActionPerformed
 
+    private void btnMostrarTodasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodasActionPerformed
+        txtBuscar.setText("");
+        mostrarTodas();
+    }//GEN-LAST:event_btnMostrarTodasActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new FrmListaFacturas().setVisible(true));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarFactura;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCerrar;
+    private javax.swing.JButton btnMostrarTodas;
     private javax.swing.JButton btnVerFactura;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBuscar;
