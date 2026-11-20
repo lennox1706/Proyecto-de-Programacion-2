@@ -23,6 +23,27 @@ public class DetalleFactura {
         this.cantidad = cantidad;
         this.importe = importe;
     }
+    
+    public DetalleFactura(String codigoProducto, String descripcion, double precioUnitario, int cantidad) {
+
+        this(codigoProducto, descripcion, precioUnitario,
+                cantidad, precioUnitario * cantidad);
+
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException(
+                    "La cantidad debe ser mayor que cero.");
+        }
+
+        if (!Double.isFinite(precioUnitario) || precioUnitario < 0) {
+            throw new IllegalArgumentException(
+                    "El precio debe ser un número mayor o igual a cero.");
+        }
+
+        if (!Double.isFinite(importe)) {
+            throw new IllegalArgumentException(
+                    "El importe supera el valor permitido.");
+        }
+    }
 
     public String getCodigoProducto() {
         return codigoProducto;

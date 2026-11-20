@@ -4,11 +4,18 @@
  */
 package com.mycompany.facturacion;
 
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author lenno
  */
 public class FrmNuevaFactura extends javax.swing.JFrame {
+    private final ProductoRepository productoRepository = new ProductoRepository();
+    private Producto productoSeleccionado;
+    private final Factura factura = new Factura(0, java.time.LocalDate.now(), "", "", 0);
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmNuevaFactura.class.getName());
 
@@ -18,6 +25,7 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     public FrmNuevaFactura() {
         initComponents();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -313,11 +321,67 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProductoActionPerformed
+        productoSeleccionado = null;
 
+        txtDescripcion.setText("");
+        txtPrecio.setText("");
+        txtImporte.setText("");
+
+        String codigo = txtCodigo.getText().trim();
+
+        if (codigo.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this, "Escriba el código del producto.");
+            return;
+        }
+
+        try {
+            Producto producto = productoRepository.buscarPorCodigo(codigo);
+
+            if (producto == null) {
+                JOptionPane.showMessageDialog(
+                        this, "No existe un producto con ese código.");
+                return;
+            }
+
+            productoSeleccionado = producto;
+
+            txtDescripcion.setText(producto.getDescripcion());
+            txtPrecio.setText(String.valueOf(producto.getPrecio()));
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "Error al buscar el producto: " + ex.getMessage());
+        }
     }//GEN-LAST:event_btnBuscarProductoActionPerformed
 
     private void txtCantidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadKeyReleased
+        txtImporte.setText("");
 
+        if (productoSeleccionado == null) {
+            return;
+        }
+
+        if (!txtCodigo.getText().trim().equals(
+                productoSeleccionado.getCodigo())) {
+            return;
+        }
+
+        try {
+            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+
+            DetalleFactura detalle = new DetalleFactura(
+                    productoSeleccionado.getCodigo(),
+                    productoSeleccionado.getDescripcion(),
+                    productoSeleccionado.getPrecio(),
+                    cantidad
+            );
+
+            txtImporte.setText(String.valueOf(detalle.getImporte()));
+
+        } catch (IllegalArgumentException ex) {
+            txtImporte.setText("");
+        }
     }//GEN-LAST:event_txtCantidadKeyReleased
 
     private void txtNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroActionPerformed
@@ -325,11 +389,60 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNumeroActionPerformed
 
     private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
+        if (productoSeleccionado == null) {
+            JOptionPane.showMessageDialog(
+                    this, "Busque un producto primero.");
+            return;
+        }
 
+        if (!txtCodigo.getText().trim().equals(
+                productoSeleccionado.getCodigo())) {
+            JOptionPane.showMessageDialog(
+                    this, "Busque nuevamente el producto.");
+            return;
+        }
+
+        try {
+            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+
+            factura.agregarProducto(productoSeleccionado, cantidad);
+
+            actualizarDetalle();
+
+            productoSeleccionado = null;
+            txtCodigo.setText("");
+            txtDescripcion.setText("");
+            txtPrecio.setText("");
+            txtCantidad.setText("");
+            txtImporte.setText("");
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "Escriba una cantidad entera válida.");
+
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_btnAgregarProductoActionPerformed
 
     private void btnQuitarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarProductoActionPerformed
+        int fila = tabla.getSelectedRow();
 
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(
+                    this, "Seleccione un producto de la factura.");
+            return;
+        }
+
+        int posicion = tabla.convertRowIndexToModel(fila);
+
+        try {
+            factura.quitarProducto(posicion);
+            actualizarDetalle();
+
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_btnQuitarProductoActionPerformed
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
@@ -347,7 +460,22 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
     private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
 
     }//GEN-LAST:event_btnBuscarClienteActionPerformed
+    private void actualizarDetalle() {
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
 
+        modelo.setRowCount(0);
+
+        for (DetalleFactura detalle : factura.getDetalles()) {
+            modelo.addRow(new Object[]{
+                detalle.getCodigoProducto(),
+                detalle.getDescripcion(),
+                detalle.getPrecioUnitario(),
+                detalle.getCantidad(),
+                detalle.getImporte()
+            });
+        }
+        lblTotal.setText("TOTAL: ₡" + factura.getTotal());
+    }
     /**
      * @param args the command line arguments
      */

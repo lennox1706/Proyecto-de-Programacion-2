@@ -54,4 +54,39 @@ public class Factura {
     public List<DetalleFactura> getDetalles() {
         return detalles;
     }
+    
+    public void agregarProducto(Producto producto, int cantidad) {
+        if (producto == null) {
+            throw new IllegalArgumentException(
+                    "Busque un producto primero.");
+        }
+
+        DetalleFactura detalle = new DetalleFactura(
+                producto.getCodigo(),
+                producto.getDescripcion(),
+                producto.getPrecio(),
+                cantidad
+        );
+
+        detalles.add(detalle);
+        calcularTotal();
+    }
+
+    public void quitarProducto(int posicion) {
+        if (posicion < 0 || posicion >= detalles.size()) {
+            throw new IllegalArgumentException(
+                    "Seleccione un producto de la factura.");
+        }
+
+        detalles.remove(posicion);
+        calcularTotal();
+    }
+
+    private void calcularTotal() {
+        total = 0;
+
+        for (DetalleFactura detalle : detalles) {
+            total = total + detalle.getImporte();
+        }
+    }
 }
