@@ -4,13 +4,21 @@
  */
 package com.mycompany.facturacion;
 
+import java.sql.SQLException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author andre
  */
 public class DlgBuscarCliente extends javax.swing.JDialog {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DlgBuscarCliente.class.getName());
+    private final ClienteRepository repositorio = new ClienteRepository();
+    private DefaultTableModel modelo;
+    private Cliente clienteSeleccionado = null;
 
     /**
      * Creates new form DlgBuscarCliente
@@ -18,6 +26,9 @@ public class DlgBuscarCliente extends javax.swing.JDialog {
     public DlgBuscarCliente(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        modelo = (DefaultTableModel) tblClientes.getModel();
+        setLocationRelativeTo(parent);
+        cargar("");
     }
 
     /**
@@ -29,25 +40,168 @@ public class DlgBuscarCliente extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        txtBuscar = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
+        btnMostrarTodos = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblClientes = new javax.swing.JTable();
+        btnSeleccionar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jLabel1.setText("Nombre o Cedula:");
+
+        txtBuscar.addActionListener(this::txtBuscarActionPerformed);
+
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(this::btnBuscarActionPerformed);
+
+        btnMostrarTodos.setText("Mostrar todo");
+        btnMostrarTodos.addActionListener(this::btnMostrarTodosActionPerformed);
+
+        tblClientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Cedula", "Nombre", "Telefono", "Correo"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblClientesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblClientes);
+
+        btnSeleccionar.setText("Seleccionar");
+        btnSeleccionar.addActionListener(this::btnSeleccionarActionPerformed);
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnMostrarTodos))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnCancelar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSeleccionar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscar)
+                    .addComponent(btnMostrarTodos))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSeleccionar)
+                    .addComponent(btnCancelar))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        cargar(txtBuscar.getText());
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
+cargar(txtBuscar.getText());
+    }//GEN-LAST:event_txtBuscarActionPerformed
+
+    private void btnMostrarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodosActionPerformed
+txtBuscar.setText("");
+cargar("");
+    }//GEN-LAST:event_btnMostrarTodosActionPerformed
+
+    private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
+       elegir();
+    }//GEN-LAST:event_btnSeleccionarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
+        if (evt.getClickCount() == 2) {
+    elegir();
+}
+    }//GEN-LAST:event_tblClientesMouseClicked
+
     /**
      * @param args the command line arguments
      */
+    private void cargar(String texto) {
+        try {
+            List<Cliente> lista;
+            if (texto.trim().isEmpty()) {
+                lista = repositorio.listar();
+            } else {
+                lista = repositorio.buscar(texto);
+            }
+            modelo.setRowCount(0);
+            for (Cliente c : lista) {
+                modelo.addRow(new Object[]{c.getCedula(), c.getNombre(), c.getTelefono(), c.getCorreo()});
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudieron cargar los clientes:\n" + ex.getMessage(),
+                    "Error de base de datos", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void elegir() {
+        int fila = tblClientes.getSelectedRow();
+        if (fila < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la tabla.",
+                    "Sin selección", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        clienteSeleccionado = new Cliente(
+                String.valueOf(modelo.getValueAt(fila, 0)),
+                String.valueOf(modelo.getValueAt(fila, 1)),
+                String.valueOf(modelo.getValueAt(fila, 2)),
+                String.valueOf(modelo.getValueAt(fila, 3)));
+        dispose();
+    }
+
+// Lo usa la pantalla de Nueva factura. Devuelve null si el usuario canceló.
+    public Cliente getClienteSeleccionado() {
+        return clienteSeleccionado;
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -83,5 +237,13 @@ public class DlgBuscarCliente extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnMostrarTodos;
+    private javax.swing.JButton btnSeleccionar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblClientes;
+    private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }
