@@ -1,20 +1,28 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.facturacion;
 
 /**
  *
- * @author lenno
+ * @author andre
  */
-public class FrmConsultarFacturas extends javax.swing.JPanel {
+public class FrmConsultarFacturas extends javax.swing.JFrame {
+
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmConsultarFacturas.class.getName());
 
     /**
      * Creates new form FrmConsultarFacturas
      */
     public FrmConsultarFacturas() {
         initComponents();
+    }
+
+    public FrmConsultarFacturas(int numeroFactura) {
+        this();
+        initComponents();
+        txtNumero.setText(String.valueOf(numeroFactura));
     }
 
     /**
@@ -26,52 +34,41 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblCedula = new javax.swing.JLabel();
-        txtNumero = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
+        lblTotal = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        btnCerrar = new javax.swing.JButton();
         txtCedula = new javax.swing.JTextField();
+        lblNumero = new javax.swing.JLabel();
         lblFecha = new javax.swing.JLabel();
         lblNombre = new javax.swing.JLabel();
-        btnCerrar = new javax.swing.JButton();
-        txtNombre = new javax.swing.JTextField();
-        txtFecha = new javax.swing.JTextField();
-        lblTotal = new javax.swing.JLabel();
-        txtTotal = new javax.swing.JTextField();
-        lblTitulo = new javax.swing.JLabel();
-        lblNumero = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
+        txtNumero = new javax.swing.JTextField();
+        txtFecha = new javax.swing.JTextField();
+        lblCedula = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
 
-        lblCedula.setText("Cedula cliente:");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        txtNumero.setEditable(false);
-        txtNumero.addActionListener(this::txtNumeroActionPerformed);
+        txtTotal.setEditable(false);
 
-        txtCedula.setEditable(false);
+        lblTotal.setText("Total:");
 
-        lblFecha.setText("Fecha:");
-
-        lblNombre.setText("Nombre cliente:");
+        txtNombre.setEditable(false);
 
         btnCerrar.setBackground(new java.awt.Color(0, 153, 0));
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("Cerrar");
         btnCerrar.addActionListener(this::btnCerrarActionPerformed);
 
-        txtNombre.setEditable(false);
-
-        txtFecha.setEditable(false);
-
-        lblTotal.setText("Total:");
-
-        txtTotal.setEditable(false);
-
-        lblTitulo.setBackground(new java.awt.Color(0, 102, 0));
-        lblTitulo.setFont(new java.awt.Font("SansSerif", 1, 17)); // NOI18N
-        lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitulo.setText("                                                                           Consulta de factura");
-        lblTitulo.setOpaque(true);
+        txtCedula.setEditable(false);
 
         lblNumero.setText("Factura:");
+
+        lblFecha.setText("Fecha:");
+
+        lblNombre.setText("Nombre cliente:");
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -91,11 +88,24 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tabla);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        txtNumero.setEditable(false);
+        txtNumero.addActionListener(this::txtNumeroActionPerformed);
+
+        txtFecha.setEditable(false);
+
+        lblCedula.setText("Cedula cliente:");
+
+        lblTitulo.setBackground(new java.awt.Color(0, 102, 0));
+        lblTitulo.setFont(new java.awt.Font("SansSerif", 1, 17)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitulo.setText("                                                                           Consulta de factura");
+        lblTitulo.setOpaque(true);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, 936, Short.MAX_VALUE)
+            .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, 899, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,16 +167,42 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
                 .addComponent(btnCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCerrarActionPerformed
 
     private void txtNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNumeroActionPerformed
 
-    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
 
-    }//GEN-LAST:event_btnCerrarActionPerformed
-
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new FrmConsultarFacturas().setVisible(true));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrar;
