@@ -357,6 +357,9 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
 
     private void txtCantidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadKeyReleased
         txtImporte.setText("");
+        productoSeleccionado = null;
+        txtDescripcion.setText("");
+        txtPrecio.setText("");
 
         if (productoSeleccionado == null) {
             return;
