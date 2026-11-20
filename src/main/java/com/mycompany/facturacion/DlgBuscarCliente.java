@@ -139,16 +139,16 @@ public class DlgBuscarCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
-cargar(txtBuscar.getText());
+        cargar(txtBuscar.getText());
     }//GEN-LAST:event_txtBuscarActionPerformed
 
     private void btnMostrarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodosActionPerformed
-txtBuscar.setText("");
-cargar("");
+        txtBuscar.setText("");
+        cargar("");
     }//GEN-LAST:event_btnMostrarTodosActionPerformed
 
     private void btnSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarActionPerformed
-       elegir();
+        elegir();
     }//GEN-LAST:event_btnSeleccionarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -157,8 +157,8 @@ cargar("");
 
     private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
         if (evt.getClickCount() == 2) {
-    elegir();
-}
+            elegir();
+        }
     }//GEN-LAST:event_tblClientesMouseClicked
 
     /**
