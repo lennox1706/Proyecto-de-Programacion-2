@@ -31,7 +31,7 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
         txtCedula = new javax.swing.JTextField();
         lblFecha = new javax.swing.JLabel();
         lblNombre = new javax.swing.JLabel();
-        btnCerrar3 = new javax.swing.JButton();
+        btnCerrar = new javax.swing.JButton();
         txtNombre = new javax.swing.JTextField();
         txtFecha = new javax.swing.JTextField();
         lblTotal = new javax.swing.JLabel();
@@ -52,10 +52,10 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
 
         lblNombre.setText("Nombre cliente:");
 
-        btnCerrar3.setBackground(new java.awt.Color(0, 153, 0));
-        btnCerrar3.setForeground(new java.awt.Color(255, 255, 255));
-        btnCerrar3.setText("Cerrar");
-        btnCerrar3.addActionListener(this::btnCerrar3ActionPerformed);
+        btnCerrar.setBackground(new java.awt.Color(0, 153, 0));
+        btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrar.setText("Cerrar");
+        btnCerrar.addActionListener(this::btnCerrarActionPerformed);
 
         txtNombre.setEditable(false);
 
@@ -68,7 +68,7 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
         lblTitulo.setBackground(new java.awt.Color(0, 102, 0));
         lblTitulo.setFont(new java.awt.Font("SansSerif", 1, 17)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitulo.setText("                                                                        Consulta de factura");
+        lblTitulo.setText("                                                                           Consulta de factura");
         lblTitulo.setOpaque(true);
 
         lblNumero.setText("Factura:");
@@ -95,11 +95,11 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, 899, Short.MAX_VALUE)
+            .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, 936, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCerrar3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -154,7 +154,7 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
                             .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btnCerrar3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -163,13 +163,13 @@ public class FrmConsultarFacturas extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNumeroActionPerformed
 
-    private void btnCerrar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrar3ActionPerformed
+    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
 
-    }//GEN-LAST:event_btnCerrar3ActionPerformed
+    }//GEN-LAST:event_btnCerrarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCerrar3;
+    private javax.swing.JButton btnCerrar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCedula;
     private javax.swing.JLabel lblFecha;

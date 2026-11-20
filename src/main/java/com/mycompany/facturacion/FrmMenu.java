@@ -130,7 +130,7 @@ public class FrmMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
     private void btnFacturacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFacturacionActionPerformed
-        //Colocar FrmFacturacion
+        new FrmListaFacturas().setVisible(true);
     }//GEN-LAST:event_btnFacturacionActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
