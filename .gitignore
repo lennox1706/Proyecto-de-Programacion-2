@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Created by https://www.toptal.com/developers/gitignore/api/windows,java,netbeans
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,java,netbeans
 
@@ -65,4 +65,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,java,netbeans
+
+# Maven
+target/
 
