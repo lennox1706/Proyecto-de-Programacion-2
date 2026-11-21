@@ -197,9 +197,14 @@ public class FrmListaFacturas extends javax.swing.JFrame {
     private void btnAgregarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFacturaActionPerformed
         FrmNuevaFactura formulario = new FrmNuevaFactura();
 
-        formulario.setVisible(true);
+        formulario.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                mostrarTodas();
+            }
+        });
 
-        mostrarTodas();
+        formulario.setVisible(true);
     }//GEN-LAST:event_btnAgregarFacturaActionPerformed
 
     private void btnVerFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerFacturaActionPerformed
@@ -212,20 +217,11 @@ public class FrmListaFacturas extends javax.swing.JFrame {
 
         int numero = (int) tabla.getValueAt(fila, 0);
 
-        try {
-            Factura factura = repositorio.BuscarPorNumero(numero);
-
-            if (factura != null) {
-                java.util.List<DetalleFactura> detalles = repositorio.listarDetalle(numero);
-            }
-
-        } catch (java.sql.SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error al consultar la factura: " + e.getMessage());
-        }
+        new FrmConsultarFacturas(numero).setVisible(true);
     }//GEN-LAST:event_btnVerFacturaActionPerformed
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
-        this.setVisible(false);
+        dispose();
     }//GEN-LAST:event_btnCerrarActionPerformed
 
     private void btnMostrarTodasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarTodasActionPerformed

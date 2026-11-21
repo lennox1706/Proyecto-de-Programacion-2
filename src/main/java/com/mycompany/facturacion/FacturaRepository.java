@@ -23,41 +23,64 @@ public class FacturaRepository {
 
     public int guardar(Factura factura) throws SQLException {
 
-        String sqlFactura = "INSERT INTO factura (fecha, cedula_cliente, total) VALUES (?, ?, ?)";
+        if (factura == null) {
+            throw new IllegalArgumentException("La factura no puede ser nula");
+        }
+        if (factura.getDetalles() == null || factura.getDetalles().isEmpty()) {
+            throw new IllegalArgumentException("La factura debe contener al menos un producto");
+        }
 
+        String sqlFactura = "INSERT INTO factura (fecha, cedula_cliente, total) VALUES (?, ?, ?)";
         String sqlDetalle = "INSERT INTO detalle_factura " + "(numero_factura, codigo_producto, precio_unitario, cantidad, importe) " + "VALUES (?, ?, ?, ?, ?)";
 
+        double totalCalculado = 0;
+        for (DetalleFactura detalle : factura.getDetalles()) {
+            if (detalle == null) {
+                throw new IllegalArgumentException("La factura contiene un detalle invalido.");
+            }
+            totalCalculado += detalle.getImporte();
+        }
+        totalCalculado = Math.round(totalCalculado * 100.0) / 100.0;
+
         try (Connection con = ConexionBD.obtenerConexion()) {
-
-            int numero;
-
-            try (PreparedStatement ps = con.prepareStatement(sqlFactura, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setDate(1, Date.valueOf(factura.getFecha()));
-                ps.setString(2, factura.getCedulaCliente());
-                ps.setDouble(3, factura.getTotal());
-                ps.executeUpdate();
-
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    rs.next();
-                    numero = rs.getInt(1);
-                }
-            }
-
-            try (PreparedStatement ps = con.prepareStatement(sqlDetalle)) {
-
-                for (DetalleFactura detalle : factura.getDetalles()) {
-
-                    ps.setInt(1, numero);
-                    ps.setString(2, detalle.getCodigoProducto());
-                    ps.setDouble(3, detalle.getPrecioUnitario());
-                    ps.setInt(4, detalle.getCantidad());
-                    ps.setDouble(5, detalle.getImporte());
-
+            con.setAutoCommit(false);
+            try {
+                int numero;
+                try (PreparedStatement ps = con.prepareStatement(sqlFactura, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setDate(1, Date.valueOf(factura.getFecha()));
+                    ps.setString(2, factura.getCedulaCliente());
+                    ps.setDouble(3, totalCalculado);
                     ps.executeUpdate();
-                }
-            }
 
-            return numero;
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (!rs.next()) {
+                            throw new SQLException("No se pudo obtener el numero de factura generado");
+                        }
+                        numero = rs.getInt(1);
+                    }
+                }
+
+                try (PreparedStatement ps = con.prepareStatement(sqlDetalle)) {
+                    for (DetalleFactura detalle : factura.getDetalles()) {
+                        ps.setInt(1, numero);
+                        ps.setString(2, detalle.getCodigoProducto());
+                        ps.setDouble(3, detalle.getPrecioUnitario());
+                        ps.setInt(4, detalle.getCantidad());
+                        ps.setDouble(5, detalle.getImporte());
+                        ps.executeUpdate();
+                    }
+                }
+
+                con.commit();
+                return numero;
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    con.rollback();
+                } catch (SQLException errorRollback) {
+                    e.addSuppressed(errorRollback);
+                }
+                throw e;
+            }
         }
     }
 
@@ -93,8 +116,7 @@ public class FacturaRepository {
 
     public List<DetalleFactura> listarDetalle(int numero) throws SQLException {
 
-        String sql = "SELECT d.codigo_producto, p.descripcion, " + "d.precio_unitario, d.cantidad, d.importe " + "FROM detalle_factura d " + "JOIN producto p ON p.codigo = d.codigo_producto "
-                + "WHERE d.numero_factura = ? ORDER BY d.id_detalle";
+        String sql = "SELECT d.codigo_producto, p.descripcion, " + "d.precio_unitario, d.cantidad, d.importe " + "FROM detalle_factura d " + "JOIN producto p ON p.codigo = d.codigo_producto " + "WHERE d.numero_factura = ? ORDER BY d.id_detalle";
 
         List<DetalleFactura> lista = new ArrayList<>();
 

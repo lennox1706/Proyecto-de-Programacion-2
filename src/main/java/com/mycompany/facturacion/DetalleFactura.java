@@ -17,32 +17,37 @@ public class DetalleFactura {
     private double importe;
 
     public DetalleFactura(String codigoProducto, String descripcion,double precioUnitario, int cantidad, double importe) {
-        this.codigoProducto = codigoProducto;
-        this.descripcion = descripcion;
+        if (codigoProducto == null || codigoProducto.trim().isEmpty()) {
+            throw new IllegalArgumentException("El codigo del producto es obligatorio.");
+        }
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            throw new IllegalArgumentException("La descripcion del producto es obligatoria.");
+        }
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
+        }
+        if (!Double.isFinite(precioUnitario) || precioUnitario < 0) {
+            throw new IllegalArgumentException("El precio debe ser un numero mayor o igual a cero.");
+        }
+        if (!Double.isFinite(importe) || importe < 0) {
+            throw new IllegalArgumentException("El importe debe ser un numero valido.");
+        }
+        double importeEsperado = Math.round(precioUnitario * cantidad * 100.0) / 100.0;
+        if (Math.abs(importe - importeEsperado) > 0.01) {
+            throw new IllegalArgumentException("El importe no coincide con el precio y la cantidad.");
+        }
+
+        this.codigoProducto = codigoProducto.trim();
+        this.descripcion = descripcion.trim();
         this.precioUnitario = precioUnitario;
         this.cantidad = cantidad;
-        this.importe = importe;
+        this.importe = importeEsperado;
     }
     
     public DetalleFactura(String codigoProducto, String descripcion, double precioUnitario, int cantidad) {
 
         this(codigoProducto, descripcion, precioUnitario,
-                cantidad, precioUnitario * cantidad);
-
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException(
-                    "La cantidad debe ser mayor que cero.");
-        }
-
-        if (!Double.isFinite(precioUnitario) || precioUnitario < 0) {
-            throw new IllegalArgumentException(
-                    "El precio debe ser un número mayor o igual a cero.");
-        }
-
-        if (!Double.isFinite(importe)) {
-            throw new IllegalArgumentException(
-                    "El importe supera el valor permitido.");
-        }
+                cantidad, Math.round(precioUnitario * cantidad * 100.0) / 100.0);
     }
 
     public String getCodigoProducto() {

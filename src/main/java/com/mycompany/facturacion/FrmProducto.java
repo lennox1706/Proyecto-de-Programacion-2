@@ -14,9 +14,10 @@ import javax.swing.table.DefaultTableModel;
  * @author marii
  */
 public class FrmProducto extends javax.swing.JFrame {
+
     private final ProductoRepository repositorio = new ProductoRepository();
     private DefaultTableModel modeloTabla;
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmProducto.class.getName());
 
     /**
@@ -29,7 +30,7 @@ public class FrmProducto extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-       modeloTabla = (DefaultTableModel) tblProducto.getModel();
+        modeloTabla = (DefaultTableModel) tblProducto.getModel();
 
         tblProducto.setModel(modeloTabla);
         txtBuscar.setToolTipText("Escriba el código o la descripción completos");
@@ -264,7 +265,19 @@ public class FrmProducto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        
+        String texto = txtBuscar.getText().trim();
+
+        if (texto.isEmpty()) {
+            actualizarTabla();
+            return;
+        }
+
+        try {
+            mostrarProductos(repositorio.buscar(texto));
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "Error al buscar productos: " + ex.getMessage());
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
@@ -322,7 +335,7 @@ public class FrmProducto extends javax.swing.JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(
                     this, "Error al agregar el producto: " + ex.getMessage());
-        } 
+        }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void tblProductoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductoMouseClicked
@@ -335,7 +348,7 @@ public class FrmProducto extends javax.swing.JFrame {
             txtExistencia.setText(tblProducto.getValueAt(fila, 3).toString());
 
             txtCodigo.setEditable(false);
-}
+        }
     }//GEN-LAST:event_tblProductoMouseClicked
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
@@ -427,7 +440,7 @@ public class FrmProducto extends javax.swing.JFrame {
                         this, "No se pudo eliminar el producto: "
                         + ex.getMessage());
             }
-}
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
@@ -465,6 +478,7 @@ public class FrmProducto extends javax.swing.JFrame {
 
         txtCodigo.setEditable(true);
     }
+
     /**
      * @param args the command line arguments
      */

@@ -30,6 +30,9 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
      */
     public FrmNuevaFactura() {
         initComponents();
+        modelo = (DefaultTableModel) tabla.getModel();
+        setLocationRelativeTo(null);
+        txtFecha.setText(java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 
     private void cargarCliente(boolean avisar) {
@@ -96,11 +99,39 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "La cantidad debe ser mayor que cero");
             return;
         }
-        double importe = productoSeleccionado.getPrecio() * cantidad;
-        detalles.add(new DetalleFactura(productoSeleccionado.getCodigo(), productoSeleccionado.getDescripcion(),
-                productoSeleccionado.getPrecio(), cantidad, importe));
+
+        int posicion = -1;
+        int Agregado = 0;
+        for (int i = 0; i < detalles.size(); i++) {
+            if (detalles.get(i).getCodigoProducto().equals(productoSeleccionado.getCodigo())) {
+                posicion = i;
+                Agregado = detalles.get(i).getCantidad();
+                break;
+            }
+        }
+
+        int cantidadTotal = Agregado + cantidad;
+        if (cantidadTotal > productoSeleccionado.getExistencia()) {
+            JOptionPane.showMessageDialog(this, "Existencia insuficiente disponible: " + productoSeleccionado.getExistencia() + " (ya agregadas a esta factura: " + Agregado + ")");
+            return;
+        }
+
+        try {
+            DetalleFactura detalle = new DetalleFactura(productoSeleccionado.getCodigo(),
+                    productoSeleccionado.getDescripcion(), productoSeleccionado.getPrecio(), cantidadTotal);
+            if (posicion >= 0) {
+                detalles.set(posicion, detalle);
+            } else {
+                detalles.add(detalle);
+            }
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            return;
+        }
+
         refrescarDetalle();
         limpiarProducto();
+
     }
 
     private void quitarProducto() {
@@ -145,10 +176,12 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
                     clienteSeleccionado.getNombre(), calcularTotal());
             f.getDetalles().addAll(detalles);
             int numero = facturaRepository.guardar(f);
-            JOptionPane.showMessageDialog(this, "Factura N° " + numero + " guardada.");
+            JOptionPane.showMessageDialog(this, "Factura N° " + numero + " guardada");
             dispose();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
 

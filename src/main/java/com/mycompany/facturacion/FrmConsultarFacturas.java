@@ -21,8 +21,43 @@ public class FrmConsultarFacturas extends javax.swing.JFrame {
 
     public FrmConsultarFacturas(int numeroFactura) {
         this();
-        initComponents();
-        txtNumero.setText(String.valueOf(numeroFactura));
+        cargarFactura(numeroFactura);
+    }
+
+    private final FacturaRepository repositorio = new FacturaRepository();
+
+    private void cargarFactura(int numero) {
+        try {
+            Factura factura = repositorio.BuscarPorNumero(numero);
+
+            if (factura == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "No existe la factura " + numero);
+                dispose();
+                return;
+            }
+
+            txtNumero.setText(String.valueOf(factura.getNumero()));
+            txtFecha.setText(factura.getFecha().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            txtCedula.setText(factura.getCedulaCliente());
+            txtNombre.setText(factura.getNombreCliente());
+            txtTotal.setText(String.format("%.2f", factura.getTotal()));
+
+            javax.swing.table.DefaultTableModel modelo
+                    = (javax.swing.table.DefaultTableModel) tabla.getModel();
+            modelo.setRowCount(0);
+
+            for (DetalleFactura d : repositorio.listarDetalle(numero)) {
+                modelo.addRow(new Object[]{
+                    d.getCodigoProducto(),
+                    d.getDescripcion(),
+                    String.format("%.2f", d.getPrecioUnitario()),
+                    d.getCantidad(),
+                    String.format("%.2f", d.getImporte())
+                });
+            }
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al consultar la factura: " + e.getMessage());
+        }
     }
 
     /**
