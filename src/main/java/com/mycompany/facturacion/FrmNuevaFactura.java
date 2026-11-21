@@ -30,6 +30,7 @@ public class FrmNuevaFactura extends javax.swing.JFrame {
      */
     public FrmNuevaFactura() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         modelo = (DefaultTableModel) tabla.getModel();
         setLocationRelativeTo(null);
         txtFecha.setText(java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));

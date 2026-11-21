@@ -17,6 +17,7 @@ public class FrmConsultarFacturas extends javax.swing.JFrame {
      */
     public FrmConsultarFacturas() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     public FrmConsultarFacturas(int numeroFactura) {

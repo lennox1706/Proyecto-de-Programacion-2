@@ -21,6 +21,7 @@ public class FrmClientes extends javax.swing.JFrame {
      */
     public FrmClientes() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         modelo = (DefaultTableModel) tblClientes.getModel();
         limpiar();
         mostrarTodas();

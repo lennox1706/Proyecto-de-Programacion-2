@@ -21,7 +21,9 @@ public class FrmListaFacturas extends javax.swing.JFrame {
      */
     public FrmListaFacturas() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         mostrarTodas();
+        
     }
 
     private void mostrarTodas() {
