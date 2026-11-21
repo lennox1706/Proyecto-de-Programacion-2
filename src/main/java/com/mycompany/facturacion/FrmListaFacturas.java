@@ -28,8 +28,7 @@ public class FrmListaFacturas extends javax.swing.JFrame {
         try {
             cargarTabla(repositorio.listar());
         } catch (java.sql.SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "Error al cargar las facturas: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this,"Error al cargar las facturas: " + e.getMessage());
         }
     }
 
@@ -46,7 +45,7 @@ public class FrmListaFacturas extends javax.swing.JFrame {
                 factura.getFecha().format(formato),
                 factura.getCedulaCliente(),
                 factura.getNombreCliente(),
-                factura.getTotal()
+                String.format(java.util.Locale.US, "%.2f", factura.getTotal())
             });
         }
     }

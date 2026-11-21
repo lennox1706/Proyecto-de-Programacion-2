@@ -33,7 +33,7 @@ public class FrmProducto extends javax.swing.JFrame {
         modeloTabla = (DefaultTableModel) tblProducto.getModel();
 
         tblProducto.setModel(modeloTabla);
-        txtBuscar.setToolTipText("Escriba el código o la descripción completos");
+        txtBuscar.setToolTipText("Escriba el codigo o la descripción completos");
 
         btnMostrarTodos.addActionListener(e -> {
             txtBuscar.setText("");
@@ -288,14 +288,12 @@ public class FrmProducto extends javax.swing.JFrame {
 
         if (codigo.isEmpty() || descripcion.isEmpty()
                 || textoPrecio.isEmpty() || textoExistencia.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Complete todos los campos.");
+            JOptionPane.showMessageDialog(this, "Complete todos los campos");
             return;
         }
 
         if (codigo.length() > 20 || descripcion.length() > 100) {
-            JOptionPane.showMessageDialog(
-                    this, "El código de máximo 20 caracteres "
-                    + "y la descripción máximo 100.");
+            JOptionPane.showMessageDialog(this, "El código de máximo 20 caracteres " + "y la descripción máximo 100");
             return;
         }
 
@@ -304,16 +302,13 @@ public class FrmProducto extends javax.swing.JFrame {
             int existencia = Integer.parseInt(textoExistencia);
 
             if (!Double.isFinite(precio) || precio < 0
-                    || precio > 9999 || existencia < 0) {
-                JOptionPane.showMessageDialog(
-                        this, "Ingrese un precio entre 0 y 9999 "
-                        + "y una existencia mayor o igual a 0.");
+                    || precio > 99999999.99 || existencia < 0) {
+                JOptionPane.showMessageDialog(this, "Ingrese un precio mayor o igual a 0 " + "y una existencia mayor o igual a 0");
                 return;
             }
 
             if (repositorio.buscarPorCodigo(codigo) != null) {
-                JOptionPane.showMessageDialog(
-                        this, "Ya existe un producto con ese código.");
+                JOptionPane.showMessageDialog(this, "Ya existe un producto con ese codigo");
                 return;
             }
 
@@ -330,7 +325,7 @@ public class FrmProducto extends javax.swing.JFrame {
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(
-                    this, "El precio debe ser un numero y la existencia un entero. ");
+                    this, "El precio debe ser un numero y la existencia un entero ");
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(
@@ -353,8 +348,7 @@ public class FrmProducto extends javax.swing.JFrame {
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         if (tblProducto.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(
-                    this, "Seleccione un producto de la tabla.");
+            JOptionPane.showMessageDialog(this, "Seleccione un producto de la tabla");
             return;
         }
 
@@ -365,13 +359,12 @@ public class FrmProducto extends javax.swing.JFrame {
 
         if (descripcion.isEmpty() || textoPrecio.isEmpty()
                 || textoExistencia.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Complete todos los campos.");
+            JOptionPane.showMessageDialog(this, "Complete todos los campos");
             return;
         }
 
         if (descripcion.length() > 100) {
-            JOptionPane.showMessageDialog(
-                    this, "La descripción es de máximo 100 caracteres.");
+            JOptionPane.showMessageDialog(this, "La descripción es de máximo 100 caracteres");
             return;
         }
 
@@ -380,31 +373,24 @@ public class FrmProducto extends javax.swing.JFrame {
             int existencia = Integer.parseInt(textoExistencia);
 
             if (!Double.isFinite(precio) || precio < 0
-                    || precio > 9999 || existencia < 0) {
-                JOptionPane.showMessageDialog(
-                        this, "Ingrese un precio entre 0 y 9999 "
-                        + "y una existencia mayor o igual a 0.");
+                    || precio > 99999999.99 || existencia < 0) {
+                JOptionPane.showMessageDialog(this, "Ingrese un precio mayor o igual a 0 " + "y una existencia mayor o igual a 0.");
                 return;
             }
 
-            Producto producto = new Producto(
-                    codigo, descripcion, precio, existencia);
+            Producto producto = new Producto(codigo, descripcion, precio, existencia);
 
             repositorio.editar(producto);
-
             limpiarCampos();
             actualizarTabla();
 
-            JOptionPane.showMessageDialog(
-                    this, "Producto actualizado correctamente.");
+            JOptionPane.showMessageDialog(this, "Producto actualizado correctamente");
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(
-                    this, "El precio debe ser un numero y la existencia un entero. ");
+            JOptionPane.showMessageDialog(this, "El precio debe ser un numero y la existencia un entero");
 
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(
-                    this, "Error al editar el producto: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al editar el producto: " + ex.getMessage());
         }
     }//GEN-LAST:event_btnEditarActionPerformed
 

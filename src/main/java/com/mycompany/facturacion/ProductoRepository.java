@@ -107,14 +107,13 @@ public class ProductoRepository {
     public List<Producto> buscar(String texto) throws SQLException {
         List<Producto> productos = new ArrayList<>();
 
-        String sql = "SELECT codigo, descripcion, precio, existencia "
-                + "FROM producto WHERE codigo = ? OR descripcion = ? "
-                + "ORDER BY codigo";
+        String sql = "SELECT codigo, descripcion, precio, existencia " + "FROM producto WHERE codigo LIKE ? OR descripcion LIKE ? " + "ORDER BY codigo";
 
         try (Connection conexion = ConexionBD.obtenerConexion(); PreparedStatement consulta = conexion.prepareStatement(sql)) {
 
-            consulta.setString(1, texto);
-            consulta.setString(2, texto);
+            String patron = "%" + texto.trim() + "%";
+            consulta.setString(1, patron);
+            consulta.setString(2, patron);
 
             try (ResultSet datos = consulta.executeQuery()) {
                 while (datos.next()) {

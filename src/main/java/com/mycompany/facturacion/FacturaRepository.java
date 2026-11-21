@@ -71,6 +71,18 @@ public class FacturaRepository {
                     }
                 }
 
+                String sqlStock = "UPDATE producto SET existencia = existencia - ? " + "WHERE codigo = ? AND existencia >= ?";
+                try (PreparedStatement ps = con.prepareStatement(sqlStock)) {
+                    for (DetalleFactura detalle : factura.getDetalles()) {
+                        ps.setInt(1, detalle.getCantidad());
+                        ps.setString(2, detalle.getCodigoProducto());
+                        ps.setInt(3, detalle.getCantidad());
+                        if (ps.executeUpdate() == 0) {
+                            throw new SQLException("Existencia insuficiente para el producto " + detalle.getCodigoProducto());
+                        }
+                    }
+                }
+
                 con.commit();
                 return numero;
             } catch (SQLException | RuntimeException e) {
@@ -99,8 +111,7 @@ public class FacturaRepository {
 
         String sql = SELECT + " WHERE f.numero_factura = ?";
 
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexionBD.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, numero);
 
@@ -120,8 +131,7 @@ public class FacturaRepository {
 
         List<DetalleFactura> lista = new ArrayList<>();
 
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexionBD.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, numero);
 
@@ -145,8 +155,7 @@ public class FacturaRepository {
 
         List<Factura> lista = new ArrayList<>();
 
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexionBD.obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             if (texto != null) {
                 ps.setString(1, "%" + texto + "%");
