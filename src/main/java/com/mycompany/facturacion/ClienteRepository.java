@@ -83,7 +83,7 @@ public class ClienteRepository {
         }
     }
 
-    // Convierte la fila actual del ResultSet en un objeto Cliente
+
     private Cliente crearCliente(ResultSet resultado) throws SQLException {
         return new Cliente(
                 resultado.getString("cedula"),
