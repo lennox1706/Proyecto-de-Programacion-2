@@ -18,8 +18,11 @@ public class FrmMenu extends javax.swing.JFrame {
     /**
      * Se usa desde el login: muestra el nombre del usuario que entro.
      */
+    private Usuario usuarioActual;
+
     public FrmMenu(Usuario usuario) {
         this();
+        this.usuarioActual = usuario;
         lblUsuario.setText("Usuario: " + usuario.getNombre());
     }
 
@@ -127,7 +130,7 @@ public class FrmMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClientesActionPerformed
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
-        new FrmUsuarios().setVisible(true);
+        new FrmUsuarios(usuarioActual == null ? null : usuarioActual.getCedula()).setVisible(true);
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
     private void btnFacturacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFacturacionActionPerformed

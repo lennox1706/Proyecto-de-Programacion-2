@@ -421,10 +421,11 @@ public class FrmProducto extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(
                         this, "Producto eliminado correctamente.");
 
+            } catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+                JOptionPane.showMessageDialog(this, "No se puede eliminar el producto ya esta en facturas registradas","Producto con facturas", JOptionPane.WARNING_MESSAGE);
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(
-                        this, "No se pudo eliminar el producto: "
-                        + ex.getMessage());
+                        this, "No se pudo eliminar el producto: " + ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed

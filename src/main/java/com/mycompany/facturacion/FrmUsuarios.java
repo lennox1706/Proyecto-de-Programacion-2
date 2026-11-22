@@ -16,6 +16,13 @@ public class FrmUsuarios extends javax.swing.JFrame {
     // Modelo de la tabla: solo cedula y nombre (la contrasena no se muestra).
    private DefaultTableModel modelo;
 
+    private String cedulaActual;
+
+    public FrmUsuarios(String cedulaActual) {
+        this();
+        this.cedulaActual = cedulaActual;
+    }
+
     public FrmUsuarios() {
         initComponents();
         modelo = (DefaultTableModel) tblUsuarios.getModel();
@@ -282,7 +289,6 @@ public class FrmUsuarios extends javax.swing.JFrame {
         }
     }
 
-    /** Al seleccionar una fila, pasa los datos a los campos. */
     private void cargarSeleccion() {
         int fila = tblUsuarios.getSelectedRow();
         if (fila < 0) {
@@ -295,7 +301,6 @@ public class FrmUsuarios extends javax.swing.JFrame {
                 txtCedula.setText(u.getCedula());
                 txtNombre.setText(u.getNombre());
                 txtContrasena.setText(u.getContrasena());
-                // La llave primaria no se puede modificar al editar.
                 txtCedula.setEditable(false);
             }
         } catch (SQLException ex) {
@@ -303,7 +308,6 @@ public class FrmUsuarios extends javax.swing.JFrame {
         }
     }
 
-    /** Valida los campos y devuelve el usuario, o null si falta algo. */
     private Usuario leerFormulario() {
         String cedula = txtCedula.getText().trim();
         String nombre = txtNombre.getText().trim();
@@ -359,19 +363,32 @@ public class FrmUsuarios extends javax.swing.JFrame {
 
     private void eliminar() {
         if (tblUsuarios.getSelectedRow() < 0) {
-            mostrarError("Seleccione un usuario de la tabla para eliminarlo.");
+            mostrarError("Seleccione un usuario de la tabla para eliminarlo");
             return;
         }
         String cedula = txtCedula.getText().trim();
+        if (cedula.equals(cedulaActual)) {
+            mostrarError("No puede eliminar el usuario con el que inicio sesion");
+            return;
+        }
+        try {
+            if (repositorio.listar().size() <= 1) {
+                mostrarError("No se puede eliminar el unico usuario");
+                return;
+            }
+        } catch (SQLException ex) {
+            mostrarError("Error al verificar usuarios: " + ex.getMessage());
+            return;
+        }
         int respuesta = JOptionPane.showConfirmDialog(this,
-                "¿Desea eliminar el usuario con cédula " + cedula + "?",
+                "¿Desea eliminar el usuario con cedula " + cedula + "?",
                 "Confirmar", JOptionPane.YES_NO_OPTION);
         if (respuesta != JOptionPane.YES_OPTION) {
             return;
         }
         try {
             repositorio.eliminar(cedula);
-            JOptionPane.showMessageDialog(this, "Usuario eliminado correctamente.");
+            JOptionPane.showMessageDialog(this, "Usuario eliminado correctamente");
             limpiar();
             mostrarTodos();
         } catch (SQLException ex) {
@@ -379,7 +396,7 @@ public class FrmUsuarios extends javax.swing.JFrame {
         }
     }
 
-    /** Vacia los campos y deja listo para agregar. */
+
     private void limpiar() {
         txtCedula.setText("");
         txtNombre.setText("");
